@@ -1,9 +1,6 @@
-Here's your content formatted as a proper `README.md` file for GitHub, with appropriate markdown structure, consistent heading levels, code blocks, and formatting:
-
----
 
 ```markdown
-# 🚀 GenAI Summarizer API
+### 🚀 GenAI Summarizer API
 
 A production-ready API for text summarization using [Cohere](https://cohere.com)'s AI models, FastAPI, Celery, and Redis.
 
