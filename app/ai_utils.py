@@ -4,22 +4,18 @@ from typing import Optional, Dict, Any
 import cohere
 from dotenv import load_dotenv
 
-# Load environment variables
 load_dotenv()
 
-# Setup logging with proper formatting
 logger = logging.getLogger(__name__)
 handler = logging.StreamHandler()
 handler.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
 logger.addHandler(handler)
 logger.setLevel(logging.INFO)
 
-# Load API key from environment variable
 api_key = os.getenv("COHERE_API_KEY")
 if not api_key:
     raise ValueError("COHERE_API_KEY not found in environment variables.")
 
-# Initialize Cohere client with retry mechanism
 client = cohere.Client(api_key)
 
 def summarize_text(text: str, length: str = 'medium', format: str = 'paragraph', extractiveness: str = 'low') -> str:
