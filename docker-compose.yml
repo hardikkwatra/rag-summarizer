@@ -1,0 +1,73 @@
+version: '3.8'
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: api
+    image: genai-summarizer-api
+    container_name: genai-summarizer-api
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - COHERE_API_KEY=${COHERE_API_KEY}
+      - REDIS_URL=redis://redis:6379/0
+      - LOG_LEVEL=INFO
+    depends_on:
+      - redis
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    volumes:
+      - ./app:/app/app
+    networks:
+      - genai-network
+
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: worker
+    image: genai-summarizer-worker
+    container_name: genai-summarizer-worker
+    restart: unless-stopped
+    environment:
+      - COHERE_API_KEY=${COHERE_API_KEY}
+      - REDIS_URL=redis://redis:6379/0
+      - LOG_LEVEL=INFO
+    depends_on:
+      - redis
+    volumes:
+      - ./app:/app/app
+      - ./worker:/app/worker
+    networks:
+      - genai-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: genai-summarizer-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    networks:
+      - genai-network
+
+volumes:
+  redis-data:
+
+networks:
+  genai-network:
+    driver: bridge
