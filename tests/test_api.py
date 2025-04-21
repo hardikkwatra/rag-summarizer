@@ -3,7 +3,7 @@ import time
 import json
 
 # API endpoint
-BASE_URL = "http://localhost:8000"
+BASE_URL = "https://summarizer.braindrop.fun"
 
 def test_health():
     """Test the health endpoint"""
